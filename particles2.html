@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>Particles Demo</title>
+        <script>
+            /*--
+                This version of the script does not implement gravity on the
+                particles, but does handle 'edge impacts'
+
+                The code is adapted from the original 'particles' Javascript.
+
+                Sorry, not pretty HTML/CSS formatting of the page. The code
+                is only focused on drawing lots of particles. :)
+            --*/
+            window.onload = function()
+            {
+                var canvas = document.createElement("canvas");
+                var ctx = canvas.getContext("2d");
+
+                canvas.width = 600;
+                canvas.height = 600;
+
+
+                var div = document.getElementById("Insert Canvas Here");
+                div.append(canvas);
+
+                ctx.fillstyle = "black";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);      
+                
+                //-- Setup  -------------------------------------
+                var particles = {},
+                    particleIndex = 0,
+                    particleNum = 10;
+
+                //-- Object -------------------------------------
+                function Particle()
+                {
+                    var red = parseInt(Math.random()*255),
+                        green = parseInt(Math.random()*255),
+                        blue = parseInt(Math.random()*255),
+                        alpha = parseFloat(Math.random());
+
+                    particleIndex++;
+                    particles[particleIndex] = this;
+
+                    this.width = 5;
+                    this.height = 5;
+
+                    this.x = canvas.width /2;
+                    this.y = canvas.height /2;
+                    this.vx = Math.random() * 10 - 5;   // Allows for left and right moving particles
+                    this.vy = Math.random() * 10 - 5;   // Up and down...
+                    
+                    this.gravity = 0.1;                 // Allow gravity to pull particles down
+                    this.id = particleIndex;
+                    this.life = 0;
+                    this.maxlife = Math.random() * 140;
+                    this.colour = "rgba("+red+","+green+","+blue+","+alpha+")";
+                }
+
+                // This version doesn't use the gravity value
+
+                Particle.prototype.draw = function()
+                {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.life++;
+                    if(this.life > this.maxlife)
+                    {
+                        delete particles[this.id];  // Kill the particle
+                    }
+                    if(Math.random() < 0.05)
+                    {
+                        this.vx = Math.random() * 10 -5;
+                        this.vy = Math.random() * 10 -5;
+                    }
+                    
+                    ctx.fillStyle = this.colour;
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                }
+                //---------------------------------------
+
+                //---------------------------------------
+                setInterval(function()
+                {
+                    // Reset the composite so that the screen clears
+                    ctx.globalCompositeOperation = "source-over";
+
+                    // Blank the screen out
+                    ctx.fillStyle = "rgba(0,0,0,0.2)";
+                    ctx.fillRect(0,0,canvas.width, canvas.height);
+
+                    //Particle Emiter:
+                    for(var i = 0; i < particleNum; i++)
+                    {
+                        new Particle();
+                    }
+
+                    // Draw all of the particles that are alive
+                    // If they draw over each other then lighten them
+                    ctx.globalCompositeOperation = "lighter";
+
+                    for(var i in particles)
+                    {
+
+                        particles[i].draw();
+                    }
+                }, 30);
+
+            };
+        </script>
+        <style>
+            body,html
+            {
+                margin: 0px;
+                padding: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Canvas motion</h1>
+        <h2>Oh, the canvas element is dynamically inserted...</h2>
+        <div id="Insert Canvas Here"></div>
+        <div id="Text">Hello</div>
+    </body>
+</html>
