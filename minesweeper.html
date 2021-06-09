@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>Heatmap D3 Demo</title>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&display=swap" rel="stylesheet"> 
+    <style>
+        h1
+        {
+            font-family: 'Roboto Condensed';
+            font-size: 30px; 
+        }
+        h2
+        {
+            font-family: 'Roboto Condensed';
+            font-size: 24px;
+        }
+        body,html
+        {
+            background-color: white ;
+            color:darkslategray;
+            font-family: 'Roboto Condensed';font-size: 14px; 
+            margin: 0px;
+            padding: 0px;
+        }
+        #untested 
+        {
+            background-color: grey;
+            border: 1px solid #aaa;
+            padding: 1px;
+            height: 20px;
+            width: 20px;
+            
+        } 
+        #show_mine 
+        {
+            background-color: pink;
+            border: 1px solid #aaa;
+            padding: 1px;
+            height: 20px;
+            width: 20px;
+            
+        } 
+        #detected 
+        {
+            background-color: blue;
+            border: 1px solid #aaa;
+            font-size: 14pt;
+            color: white;
+            text-align: center;
+            margin: auto;
+            padding: 1px;
+            height: 20px;
+            width: 20px;
+            
+        } 
+        #mine
+        {
+            background-color: red;
+            color: red;
+            border: 1px solid #aaa;
+            padding: 1px;
+            height: 20px;
+            width: 20px;            
+        }
+        #flag
+        {
+            background-color: yellow;
+            border: 1px solid #aaa;
+            padding: 1px;
+            height: 20px;
+            width: 20px;
+        }
+        #block_text
+        {
+            display: inline;
+        }
+        #score
+        {
+            display: inline;
+        }
+    }
+    </style>
+    <body>
+        <script src="minesweeper.js"></script>
+        <noscript>This minesweeper game requires JavaScript to run</noscript>
+        <H1>MineSweeper</H1>
+        <H2><div id='state'>Start Looking For Mines</div></H2>
+        <H3><div id='block_text'>Squares left:</div> <div id='score'>999</div></H3>
+        <div id='sea'></div>
+    </body>
+</html>
