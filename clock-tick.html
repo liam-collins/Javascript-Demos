@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>Clock Demo</title>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&display=swap" rel="stylesheet"> 
+        <script>
+            window.onload = function()
+            {
+                var canvas = document.createElement("canvas");
+                var ctx = canvas.getContext("2d");
+
+                canvas.width = 800;
+                canvas.height = 400;
+
+
+                var div = document.getElementById("Insert Canvas Here");
+                div.append(canvas);
+                var time = document.getElementById("Date and Time");
+                var tick = document.getElementById("tick");
+
+                ctx.fillstyle = "darkslategray";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);      
+                
+                var pos_x = 200;
+                var pos_y = 200;
+
+                ctx.lineWidth = 20;
+
+
+                function hand(time, colour, lineWidth, ringRadius, division)
+                {
+
+                    ctx.lineWidth = lineWidth;
+                    ctx.strokeStyle = colour;
+                    ctx.beginPath();
+                    ctx.arc(pos_x,pos_y,
+                            ringRadius,
+                            Math.PI*1.5,
+                            (Math.PI*2*(time/division))+1.5*Math.PI,
+                            false);
+
+                    ctx.stroke();
+                    ctx.closePath()
+                }
+
+                function clock()
+                {
+                    let now = new Date();
+                    time.innerText = now;
+
+                    var hours = now.getHours(),   
+                        minutes = now.getMinutes(),
+                        seconds = now.getSeconds();
+
+                    if(hours >= 12) { hours -= 12; }
+
+                    tick.innerText = "T:"+hours.toString().padStart(2,0)+":"+minutes.toString().padStart(2,0)+":"+seconds.toString().padStart(2,0);
+
+                    ctx.fillStyle = "darkslategray";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+
+
+                    hand(hours, "yellow", 25, 50,12);
+                    hand(minutes, "blue", 20, 70,60);
+                    hand(seconds, "red", 6, 80,60);
+                    ctx.font = "100px 'Roboto Condensed'";
+                    ctx.fillStyle = "white";
+                    ctx.fillText(hours.toString().padStart(2,0)+":"+
+                                    minutes.toString().padStart(2,0)+":"+
+                                    seconds.toString().padStart(2,0),
+                                    300,250);
+                    
+                    ctx.strokeStyle="white";
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(pos_x,pos_y);
+                    ctx.lineTo(pos_x, pos_y-83);
+                    ctx.stroke();
+
+                }
+
+                
+                clock();
+                setInterval(function()
+                {
+                    clock();
+
+                }, 200);
+
+            };
+        </script>
+        <style>
+            h1
+            {
+                font-family: 'Roboto Condensed';font-size: 30px; 
+            }
+            h2
+            {
+                font-family: 'Roboto Condensed';font-size: 24px;
+            }
+            body,html
+            {
+                background-color: darkslategray;
+                color: white;
+                font-family: 'Roboto Condensed';font-size: 14px; 
+                margin: 0px;
+                padding: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Canvas Clock</h1>
+        <h2>Oh, the canvas element is dynamically inserted...</h2>
+        <div id="Insert Canvas Here"></div>
+        <div id="Date and Time">Something went wrong</div>
+        <div id="tick"></div>
+    </body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>Clock Demo</title>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&display=swap" rel="stylesheet"> 
+        <script src="https://d3js.org/d3.v6.min.js"></script>
+        <script src="https://d3js.org/d3-time.v2.min.js"></script>
+<script src="https://d3js.org/d3-time-format.v3.min.js"></script>
+        <script>
+            window.onload = function()
+            {
+                /* Set two constants for quicker computing:
+
+                    tau     = 2 * Pi or a full circle in radians
+                    deg_270 is used to move the start point of the
+                            arc function to start at the 12 o'clock
+                            position rather than at the 3 o'clock
+                            position
+                */
+                const   TAU = Math.PI*2;
+                const   DEG_270 = Math.PI * 1.5;
+                /*
+                    Some basic time values:
+                */
+                const   MINUTES_IN_12HRS = 12*60;   // 12 Hour clock
+                const   MINUTES_IN_24HRS = 24*60;   // 24 Hour clock
+                const   MINS_IN_HOUR = 60;
+                const   SECS_IN_MINUTE = 60;
+                const   MS_IN_SECONDS = 1000;
+                const   MSECS_IN_MINUTE = MS_IN_SECONDS * SECS_IN_MINUTE;
+                const   SECS_IN_HOUR = SECS_IN_MINUTE * MINS_IN_HOUR;
+
+                const   THIN_LINE_WIDTH     = 2;
+                const   SECONDS_LINE_WIDTH  = 6;
+                const   MINUTES_LINE_WIDTH  = 10;
+                const   HOUR_LINE_WIDTH     = 12;
+
+                const   MIDDAY = 12;
+                const   MIDNIGHT = 0;
+
+                let canvas = document.createElement("canvas");
+                let ctx = canvas.getContext("2d");
+
+                canvas.width = 800;
+                canvas.height = 400;
+
+                let div = document.getElementById("Insert Canvas Here");
+                div.append(canvas);
+
+                let time = document.getElementById("Date and Time");
+                let tick = document.getElementById("tick");
+
+                ctx.fillstyle = "darkslategray";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);      
+                
+                let pos_x = 200;
+                let pos_y = 200;
+
+                ctx.lineWidth = 20;
+
+                function hand(time, colour, lineWidth, ringRadius)
+                {
+
+                    ctx.lineWidth = lineWidth;
+                    ctx.lineCap = "round";
+                    ctx.shadowBlur = 5;
+                    ctx.shadowColor = colour;
+                    ctx.strokeStyle = colour;
+                    ctx.beginPath();
+                    ctx.arc(pos_x,pos_y,
+                            ringRadius,
+                            DEG_270,
+                            (TAU*(time))+DEG_270,
+                            false);
+
+                    ctx.stroke();
+                    ctx.closePath()
+                }
+
+                function clock()
+                {
+                    let now = new Date();
+                    time.innerText = now;
+
+                    let hours = now.getHours(),   
+                        minutes = now.getMinutes(),
+                        seconds = now.getSeconds(),
+                        ms      = now.getMilliseconds();
+                        
+                    gradient = ctx.createRadialGradient(pos_x, pos_y, 1, pos_x, pos_y, 125);
+                    gradient.addColorStop(1, "darkslategray");
+                    if((hours > 6) && (hours < 20))
+                    {
+                        gradient.addColorStop(0, "white");
+                    }
+                    else
+                    {
+                        gradient.addColorStop(0, "black");
+                    }
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0,0,canvas.width, canvas.height);
+
+                    ctx.font = "100px 'Roboto Condensed'";
+                    ctx.fillStyle = "white";
+                    
+                    ctx.fillText(hours.toString().padStart(2,0)+":"+
+                                    minutes.toString().padStart(2,0)+":"+
+                                    seconds.toString().padStart(2,0),
+                                    300,230);
+                    
+
+                    let day = "AM";
+                    if(hours > MIDDAY || hours == MIDNIGHT)  { day = "PM"; }
+                    if(hours >= MIDDAY) { hours -= MIDDAY; }
+
+                    // Proper strftime function :) 
+                    let dtFormat = d3.timeFormat('%Y-%m-%d %H:%M:%S');
+                    tick.innerText= dtFormat(now);
+
+                    hours = ((hours * MINS_IN_HOUR) + minutes) / MINUTES_IN_12HRS;
+                    minutes = ((minutes * SECS_IN_MINUTE) + seconds) / SECS_IN_HOUR;
+                    seconds = ((seconds * MS_IN_SECONDS) + ms) / MSECS_IN_MINUTE;
+
+                    hand(hours, "yellow", HOUR_LINE_WIDTH, 56);
+                    hand(minutes, "green", MINUTES_LINE_WIDTH, 70);
+                    hand(seconds, "red", SECONDS_LINE_WIDTH, 80);
+
+                    ctx.strokeStyle="white";
+                    ctx.lineWidth = THIN_LINE_WIDTH;
+                    ctx.beginPath();
+                    ctx.moveTo(pos_x,pos_y);
+                    ctx.lineTo(pos_x, pos_y-83);
+                    ctx.stroke();
+                }
+ 
+                clock();
+                setInterval(function()
+                {
+                    clock();
+                }, 50);
+            };
+
+        </script>
+        <style>
+            h1
+            {
+                font-family: 'Roboto Condensed';
+                font-size: 30px; 
+            }
+            h2
+            {
+                font-family: 'Roboto Condensed';
+                font-size: 24px;
+            }
+            body,html
+            {
+                background-color: darkslategray;
+                color: white;
+                font-family: 'Roboto Condensed';font-size: 14px; 
+                margin: 0px;
+                padding: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Canvas Clock</h1>
+        <div id="Insert Canvas Here"></div>
+        <div id="Date and Time">Something went wrong</div>
+        <div id="tick"></div>
+    </body>
+</html>
